@@ -17,9 +17,6 @@ def return_data(orig=False):
 
     header = data.splitlines()[0].split(';')[:-1]
 
-    cols_to_encode = ['job', 'marital', 'education', 'default', 'housing',
-           'loan', 'contact','month','poutcome']
-
     df = pd.DataFrame([x.split(';')[:-1] for x in data.splitlines()][1:], columns=header)
 
     for col in df.columns:
@@ -34,13 +31,25 @@ def return_data(orig=False):
     if orig:
         return df, None, None
 
-    for col in cols_to_encode:
-        df = encode_and_bind(df, col)
+    df.age.fillna(0, inplace=True)
+    df.replace([''], 'unknown', inplace=True)
+    df.replace(['other'], 'unknown', inplace=True)
+    df.pdays.replace(-1, 1000, inplace=True)
 
+    # ######### double check ########
+    # df = pd.read_csv(r'D:\Personal\presentations\WF\bank_nopar.csv', sep=',')
+    # df = df.drop('Validation', axis=1)
+    # df = df.drop('reweight', axis=1)
+    # ################################
+    # df = df.sample(frac=1)
     lb = preprocessing.LabelBinarizer()
     labels = df.y.copy()
     labels = lb.fit_transform(labels)
     df = df.drop('y', axis=1)
     pos_weight = len(labels)/np.sum(labels)
 
-    return df.sample(frac=1), labels, pos_weight
+    cols_to_encode = ['job', 'marital', 'education', 'default', 'housing', 'loan', 'contact','month','poutcome']
+    for col in cols_to_encode:
+        df = encode_and_bind(df, col)
+
+    return df, labels, pos_weight
