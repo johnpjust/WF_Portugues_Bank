@@ -47,14 +47,14 @@ def customMonitor(yTrue,yPred):
 
 df, labels, pos_weight =  preproc_data.return_data(orig=False)
 
-df = (df - df.mean(axis=0))/df.std(axis=0)
+df = (df - df.mean(axis=0))/df.std(axis=0) ## L-BFGS won't converge to good results without normalization, but SGD is OK without it
 
 split = 0.2
 
-batch_size = 50000
-train_ds = df_to_dataset(df.iloc[:np.int(df.shape[0]*(1-2*split)), :], labels[:np.int(df.shape[0]*(1-2*split))], batch_size=batch_size)
-val_ds = df_to_dataset(df.iloc[np.int(-2*df.shape[0]*split):np.int(-df.shape[0]*split), :], labels[np.int(-2*df.shape[0]*split):np.int(-df.shape[0]*split)], shuffle=False, batch_size=batch_size)
-test_ds = df_to_dataset(df.iloc[np.int(-df.shape[0]*split):, :], labels[np.int(-df.shape[0]*split):], shuffle=False, batch_size=batch_size)
+# batch_size = 50000
+# train_ds = df_to_dataset(df.iloc[:np.int(df.shape[0]*(1-2*split)), :], labels[:np.int(df.shape[0]*(1-2*split))], batch_size=batch_size)
+# val_ds = df_to_dataset(df.iloc[np.int(-2*df.shape[0]*split):np.int(-df.shape[0]*split), :], labels[np.int(-2*df.shape[0]*split):np.int(-df.shape[0]*split)], shuffle=False, batch_size=batch_size)
+# test_ds = df_to_dataset(df.iloc[np.int(-df.shape[0]*split):, :], labels[np.int(-df.shape[0]*split):], shuffle=False, batch_size=batch_size)
 
 # actfun = tf.nn.tanh
 # model = tf.keras.Sequential()
